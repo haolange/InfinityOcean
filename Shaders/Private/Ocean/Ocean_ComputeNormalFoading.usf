@@ -1,0 +1,29 @@
+﻿#pragma once
+
+#include "/Engine/Private/Common.ush"
+
+float4 SizeScale;
+Texture2D VectorTexture; 
+SamplerState VectorTextureSampler;
+RWTexture2D<float4> Output_UAV_NormalFomeTexture;
+
+[numthreads(16, 16, 1)] 
+void ComputeNormalFoading(uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2 UV = (dispatchThreadId.xy + 0.5) * rcp(SizeScale.xy);
+
+	float3 Center = VectorTexture.SampleLevel(VectorTextureSampler, UV, 0).xyz;
+	float3 Left = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(-1, 0) / SizeScale.xy), 0).xyz;
+	float3 Right = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(1, 0) / SizeScale.xy), 0).xyz;
+	float3 Top = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, -1) / SizeScale.xy), 0).xyz;
+	float3 Bottom = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, 1) / SizeScale.xy), 0).xyz;
+
+	float2 Dx = (Left.xy - Right.xy) * SizeScale.z;
+	float2 Dy = (Top.xy - Bottom.xy) * SizeScale.z;
+	float J = (1 + Dx.x) * (1 + Dy.y) - Dx.y * Dy.x;
+
+	float Fome = max(1 - J, 0) * 2.5;
+	float2 Gradient = float2(-(Right.z - Left.z) / max(0.01, 1 + SizeScale.w * (Right.x - Left.x)), -(Bottom.z - Top.z) / max(0.01, 1 + SizeScale.w * (Top.y - Top.y)));  
+
+	Output_UAV_NormalFomeTexture[dispatchThreadId.xy] = float4(Gradient, J, Fome);
+}

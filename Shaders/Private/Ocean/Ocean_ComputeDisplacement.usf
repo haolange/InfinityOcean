@@ -1,0 +1,47 @@
+﻿#pragma once
+
+#include "/Engine/Private/Common.ush"
+#include "Ocean_Common.ush"
+
+
+Buffer<float2> Input_SRV_HTBuffer;
+Buffer<float4> Input_SRV_DTBuffer;
+RWTexture2D<float4> Output_UAV_DisplacementTexture;
+
+
+[numthreads(MAX_FFT_RESOLUTION / 2, 1, 1)] 
+void ComputeDisplacement(uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	uint rowIdx = dispatchThreadId.x * 2;
+	uint columnIdx = dispatchThreadId.y;
+	uint reverseRowIdx = reversebits(rowIdx) >> OceanParameter.ResolutionLog2_Add32;
+
+	int index = reverseRowIdx * OceanParameter.Resolution + columnIdx;
+	int jndex = (OceanParameter.ResolutionHalf - reverseRowIdx) * OceanParameter.Resolution + columnIdx;
+
+	float2 ht[2], dx[2], dy[2];
+	
+	if (rowIdx < OceanParameter.Resolution) {
+		ht[0] = Input_SRV_HTBuffer[index];
+		ht[1] = Input_SRV_HTBuffer[jndex];
+		ht[1].y = -ht[1].y;
+
+		float4 dti = Input_SRV_DTBuffer[index];
+		float4 dtj = Input_SRV_DTBuffer[jndex];
+
+		dx[0] = dti.xy;
+		dx[1] = float2(dtj.x, -dtj.y);
+		dy[0] = dti.zw;
+		dy[1] = float2(dtj.z, -dtj.w);
+	}
+
+	fft_Compute((uint)OceanParameter.Resolution, (uint)OceanParameter.ResolutionHalf, ht, dx, dy, dispatchThreadId.x);
+
+	if (rowIdx < OceanParameter.Resolution) {
+		float sgn = (dispatchThreadId.x + columnIdx) & 0x1 ? -1 : 1;
+		float scale = OceanParameter.ChoppyScale * sgn;
+
+		Output_UAV_DisplacementTexture[uint2(columnIdx, dispatchThreadId.x)] = float4(dx[0].x * scale, dy[0].x * scale, ht[0].x * sgn, 1);
+		Output_UAV_DisplacementTexture[uint2(columnIdx, dispatchThreadId.x + (uint)OceanParameter.ResolutionHalf)] = float4(dx[1].x * scale, dy[1].x * scale, ht[1].x * sgn, 1);
+	}
+}

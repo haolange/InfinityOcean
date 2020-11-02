@@ -1,0 +1,157 @@
+﻿#pragma once
+
+#define WARP_WIDTH 8 
+#define MAX_FFT_RESOLUTION 512
+
+groupshared float2 uData[MAX_FFT_RESOLUTION/2];
+groupshared float2 vData[MAX_FFT_RESOLUTION/2];
+groupshared float2 wData[MAX_FFT_RESOLUTION/2];
+
+void fft_Compute(uint Resolution, uint HalfResolution, inout float2 u[2], inout float2 v[2], inout float2 w[2], uint threadIdx)
+{
+	bool flag = false;
+	float scale = 3.14f * 0.5f; // Pi
+
+	if(threadIdx < HalfResolution)
+	{
+		{
+			uint i = threadIdx;
+
+			float2 du = u[1]; 
+			float2 dv = v[1]; 
+			float2 dw = w[1]; 
+				
+			u[1] = u[0] - du; 
+			u[0] = u[0] + du;
+			v[1] = v[0] - dv; 
+			v[0] = v[0] + dv;
+			w[1] = w[0] - dw; 
+			w[0] = w[0] + dw;
+			
+			flag = threadIdx & 1;
+
+			// much slower: vData[i] = v[!flag];
+			if(flag) 
+			{
+				uData[i] = u[0]; 
+				vData[i] = v[0]; 
+				wData[i] = w[0]; 
+			} else {
+				uData[i] = u[1]; 
+				vData[i] = v[1]; 
+				wData[i] = w[1]; 
+			}
+			GroupMemoryBarrier();
+		}
+
+		[unroll(2)] // log2(WARP_WIDTH) - 1
+		for(uint stride = 2; stride < WARP_WIDTH; stride <<= 1, scale *= 0.5f)
+		{
+			uint i = threadIdx ^ (stride-1);
+			uint j = threadIdx & (stride-1);
+
+			// much slower: v[!flag] = vData[i];
+			if(flag) 
+			{
+				u[0] = uData[i]; 
+				v[0] = vData[i]; 
+				w[0] = wData[i]; 
+			} else { 
+				u[1] = uData[i];
+				v[1] = vData[i];
+				w[1] = wData[i];
+			}
+
+			float sin, cos;
+			sincos(j * scale, sin, cos);
+
+			float2 du = float2(
+				cos * u[1].x - sin * u[1].y, 
+				sin * u[1].x + cos * u[1].y);
+			float2 dv = float2(
+				cos * v[1].x - sin * v[1].y, 
+				sin * v[1].x + cos * v[1].y);
+			float2 dw = float2(
+				cos * w[1].x - sin * w[1].y, 
+				sin * w[1].x + cos * w[1].y);
+
+			u[1] = u[0] - du;
+			u[0] = u[0] + du;
+			v[1] = v[0] - dv;
+			v[0] = v[0] + dv;
+			w[1] = w[0] - dw;
+			w[0] = w[0] + dw;
+
+			flag = threadIdx & stride;
+
+			// much slower: vData[i] = v[!flag];
+			if(flag) 
+			{
+				uData[i] = u[0]; 
+				vData[i] = v[0]; 
+				wData[i] = w[0]; 
+			} else { 
+				uData[i] = u[1];
+				vData[i] = v[1];
+				wData[i] = w[1];
+			}
+			GroupMemoryBarrier();
+		}
+	}
+
+	[unroll(6)] // log2(MAX_FFT_RESOLUTION) - log2(WARP_WIDTH)
+	for(uint stride = WARP_WIDTH; stride < Resolution; stride <<= 1, scale *= 0.5f)
+	{
+		if(threadIdx < HalfResolution)
+		{
+			uint i = threadIdx ^ (stride-1);
+			uint j = threadIdx & (stride-1);
+
+			// much slower: v[!flag] = vData[i];
+			if(flag) 
+			{
+				u[0] = uData[i]; 
+				v[0] = vData[i]; 
+				w[0] = wData[i]; 
+			} else { 
+				u[1] = uData[i];
+				v[1] = vData[i];
+				w[1] = wData[i];
+			}
+
+			float sin, cos;
+			sincos(j * scale, sin, cos);
+
+			float2 du = float2(
+				cos * u[1].x - sin * u[1].y, 
+				sin * u[1].x + cos * u[1].y);
+			float2 dv = float2(
+				cos * v[1].x - sin * v[1].y, 
+				sin * v[1].x + cos * v[1].y);
+			float2 dw = float2(
+				cos * w[1].x - sin * w[1].y, 
+				sin * w[1].x + cos * w[1].y);
+
+			u[1] = u[0] - du;
+			u[0] = u[0] + du;
+			v[1] = v[0] - dv;
+			v[0] = v[0] + dv;
+			w[1] = w[0] - dw;
+			w[0] = w[0] + dw;
+
+			flag = threadIdx & stride;
+			// much slower: vData[i] = v[!flag];
+			if(flag) 
+			{
+				uData[i] = u[0]; 
+				vData[i] = v[0]; 
+				wData[i] = w[0]; 
+			} else { 
+				uData[i] = u[1];
+				vData[i] = v[1];
+				wData[i] = w[1];
+			}
+		}		
+		GroupMemoryBarrierWithGroupSync();
+	}
+}

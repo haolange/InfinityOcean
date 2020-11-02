@@ -1,0 +1,69 @@
+﻿#pragma once
+
+#include "/Engine/Private/Common.ush"
+#include "Ocean_Common.ush"
+
+
+Buffer<float> Input_SRV_OmegaBuffer;
+Buffer<float2> Input_SRV_HZeroBuffer;
+RWBuffer<float2> Output_UAV_HTBuffer;
+RWBuffer<float4> Output_UAV_DTBuffer;
+
+
+[numthreads(MAX_FFT_RESOLUTION / 2, 1, 1)] 
+void ComputeSpecturm(uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	uint columnIdx = dispatchThreadId.x * 2;
+	uint rowIdx = dispatchThreadId.y;
+	uint reverseColumnIdx = reversebits(columnIdx) >> OceanParameter.ResolutionLog2_Add32;
+	int3 n = int3(reverseColumnIdx - OceanParameter.ResolutionHalf, reverseColumnIdx, rowIdx - OceanParameter.ResolutionHalf);
+
+	float2 ht[2], dx[2], dy[2];
+
+	if (columnIdx < OceanParameter.Resolution) {
+		float4 h0i, h0j;
+		float2 omega;
+
+		uint h0_index = rowIdx * OceanParameter.Resolution_PlusOne + reverseColumnIdx;
+		uint h0_jndex = h0_index + OceanParameter.ResolutionHalf;
+		uint omega_index = rowIdx * OceanParameter.ResolutionHalf_PlusOne;
+		uint omega_jndex = omega_index + OceanParameter.ResolutionHalf;
+
+		h0i.xy = Input_SRV_HZeroBuffer[h0_index];
+		h0j.xy = Input_SRV_HZeroBuffer[OceanParameter.Resolution_PlusOne_Squared_MinusOne  - h0_index];
+		omega.x = Input_SRV_OmegaBuffer[omega_index + reverseColumnIdx] * OceanParameter.Time;
+
+		h0i.zw = Input_SRV_HZeroBuffer[h0_jndex];
+		h0j.zw = Input_SRV_HZeroBuffer[OceanParameter.Resolution_PlusOne_Squared_MinusOne  - h0_jndex];
+		omega.y = Input_SRV_OmegaBuffer[omega_jndex - reverseColumnIdx] * OceanParameter.Time;
+		omega -= floor(float2(omega * 0.159f)) * 6.283f;
+
+		float2 sinOmega, cosOmega;
+		sincos(float2(omega), sinOmega, cosOmega);
+
+		ht[0].x = (h0i.x + h0j.x) * cosOmega.x - (h0i.y + h0j.y) * sinOmega.x;
+		ht[1].x = (h0i.z + h0j.z) * cosOmega.y - (h0i.w + h0j.w) * sinOmega.y;
+		ht[0].y = (h0i.x - h0j.x) * sinOmega.x + (h0i.y - h0j.y) * cosOmega.x;
+		ht[1].y = (h0i.z - h0j.z) * sinOmega.y + (h0i.w - h0j.w) * cosOmega.y;
+
+		float2 nr = n.xy || n.z ? rsqrt(float2(n.xy * n.xy + n.z * n.z)) : 0;
+		float2 dt0 = float2(-ht[0].y, ht[0].x) * nr.x;
+		float2 dt1 = float2(-ht[1].y, ht[1].x) * nr.y;
+
+		dx[0] = n.x * dt0;
+		dx[1] = n.y * dt1;
+		dy[0] = n.z * dt0;
+		dy[1] = n.z * dt1;
+	}
+
+	fft_Compute(OceanParameter.Resolution, OceanParameter.ResolutionHalf, ht, dx, dy, dispatchThreadId.x);
+	if (columnIdx < (uint)OceanParameter.Resolution) {
+		uint index = rowIdx * OceanParameter.Resolution + dispatchThreadId.x;
+
+		Output_UAV_HTBuffer[index] = ht[0];
+		Output_UAV_HTBuffer[index + OceanParameter.ResolutionHalf] = ht[1];
+
+		Output_UAV_DTBuffer[index] = float4(dx[0], dy[0]);
+		Output_UAV_DTBuffer[index + OceanParameter.ResolutionHalf] = float4(dx[1], dy[1]);
+	}
+}

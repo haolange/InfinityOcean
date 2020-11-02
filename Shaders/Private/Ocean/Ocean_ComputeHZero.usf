@@ -1,0 +1,48 @@
+﻿#pragma once
+
+#include "/Engine/Private/Common.ush"
+#include "Ocean_Common.ush"
+
+
+Buffer<float2> Input_SRV_GaussBuffer;
+RWBuffer<float2> Output_UAV_HZeroBuffer;
+//RWTexture2D<float4> Output_UAV_DisplacementTexture;
+
+
+[numthreads(MAX_FFT_RESOLUTION, 1, 1)] 
+void ComputeHZero(uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	uint rowIdx = dispatchThreadId.y;
+	uint columnIdx = dispatchThreadId.x;
+
+	if (columnIdx < OceanParameter.Resolution)
+	{
+		int nx = columnIdx - OceanParameter.ResolutionHalf;
+		int ny = rowIdx - OceanParameter.ResolutionHalf;
+		float nr = sqrt(float(nx * nx + ny * ny));
+
+		float amplitude = 0;
+		if ((nx || ny) && nr >= 0 && nr < OceanParameter.Resolution) {
+			float2 k = float2(nx * OceanParameter.FrequencyScale, ny * OceanParameter.FrequencyScale);
+
+			float kSqr = k.x * k.x + k.y * k.y;
+			float kCos = k.x * OceanParameter.WindDir.x + k.y * OceanParameter.WindDir.y;
+			float scale = OceanParameter.LinearScale * kCos * rsqrt(kSqr * kSqr * kSqr);
+
+			if (kCos < 0) {
+				scale *= OceanParameter.WindScale;
+			}
+
+			amplitude = scale * exp( OceanParameter.PowerScale * kSqr + OceanParameter.RootScale / kSqr );
+		}
+
+		int index = rowIdx * OceanParameter.Resolution_PlusOne + columnIdx;
+		float2 h0 = amplitude * Input_SRV_GaussBuffer[index - rowIdx];
+		
+		//Output_UAV_DisplacementTexture[uint2(columnIdx, rowIdx)] = float4(h0, 0, 1);
+		Output_UAV_HZeroBuffer[index] = h0;
+		if (!rowIdx || !columnIdx) {
+			Output_UAV_HZeroBuffer[OceanParameter.Resolution_PlusOne_Squared_MinusOne  - index] = 0; 
+		}
+	}
+}
