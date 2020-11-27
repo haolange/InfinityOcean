@@ -17,7 +17,7 @@ UOceanRender::~UOceanRender()
 PRAGMA_DISABLE_OPTIMIZATION
 bool UOceanRender::ShouldDrawTexture()
 {
-	return OceanProfile_A && OceanProfile_B && DisplacementRT_A && DisplacementRT_B;
+	return Profile_A && Profile_B && HeightRT_A && NormalRT_A && HeightRT_B && NormalRT_B;
 }
 
 void UOceanRender::InitTexture()
@@ -28,11 +28,11 @@ void UOceanRender::InitTexture()
 	(
 		[FeatureLevel, this](FRHICommandListImmediate& RHICmdList)
 		{
-			FRHITexture* OutRHI_A = DisplacementRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
-			FRHITexture* OutRHI_B = DisplacementRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			uint8 HeightFormat = HeightRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture()->GetFormat();
+			uint8 NormalFormat = NormalRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture()->GetFormat();
 
-			OceanTexture_A->Init(FeatureLevel, DisplacementRT_A->SizeX, OceanProfile_A->Parameters);
-			OceanTexture_B->Init(FeatureLevel, DisplacementRT_B->SizeX, OceanProfile_B->Parameters);
+			OceanTexture_A->Init(FeatureLevel, HeightRT_A->SizeX, HeightFormat, NormalFormat, Profile_A->Parameters);
+			OceanTexture_B->Init(FeatureLevel, HeightRT_B->SizeX, HeightFormat, NormalFormat, Profile_B->Parameters);
 		}
 	);
 }
@@ -45,11 +45,13 @@ void UOceanRender::DrawTexture(float SimulationTime)
 	(
 		[FeatureLevel, SimulationTime, this](FRHICommandListImmediate& RHICmdList)
 		{
-			FRHITexture* OutRHI_A = DisplacementRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
-			FRHITexture* OutRHI_B = DisplacementRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			FRHITexture* OutHeight_A = HeightRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			FRHITexture* OutNormal_A = NormalRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			FRHITexture* OutHeight_B = HeightRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			FRHITexture* OutNormal_B = NormalRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
 
-			OceanTexture_A->Draw(FeatureLevel, DisplacementRT_A->SizeX, SimulationTime, OceanProfile_A->Parameters, OutRHI_A, RHICmdList);
-			OceanTexture_B->Draw(FeatureLevel, DisplacementRT_B->SizeX, SimulationTime, OceanProfile_B->Parameters, OutRHI_B, RHICmdList);
+			OceanTexture_A->Draw(FeatureLevel, HeightRT_A->SizeX, SimulationTime, Profile_A->Parameters, OutHeight_A, OutNormal_A, RHICmdList);
+			OceanTexture_B->Draw(FeatureLevel, HeightRT_B->SizeX, SimulationTime, Profile_B->Parameters, OutHeight_B, OutNormal_B, RHICmdList);
 		}
 	);
 }

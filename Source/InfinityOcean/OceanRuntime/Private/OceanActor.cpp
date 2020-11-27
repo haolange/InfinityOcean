@@ -22,10 +22,12 @@ void AOceanActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	OceanRender->OceanProfile_A = OceanProfile_A;
-	OceanRender->OceanProfile_B = OceanProfile_B;
-	OceanRender->DisplacementRT_A = DisplacementRT_A;
-	OceanRender->DisplacementRT_B = DisplacementRT_B;
+	OceanRender->Profile_A = Profile_A;
+	OceanRender->Profile_B = Profile_B;
+	OceanRender->HeightRT_A = HeightRT_A;
+	OceanRender->NormalRT_A = NormalRT_A;
+	OceanRender->HeightRT_B = HeightRT_B;
+	OceanRender->NormalRT_B = NormalRT_B;
 }
 
 PRAGMA_DISABLE_OPTIMIZATION

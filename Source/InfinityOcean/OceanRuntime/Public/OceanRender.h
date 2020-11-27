@@ -13,16 +13,23 @@ class OCEANRUNTIME_API UOceanRender : public UActorComponent
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
-	UOceanProfile* OceanProfile_A;
+	UOceanProfile* Profile_A;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
-	UTextureRenderTarget2D* DisplacementRT_A;
+	UTextureRenderTarget2D* HeightRT_A;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
-	UOceanProfile* OceanProfile_B;
+	UTextureRenderTarget2D* NormalRT_A;
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
-	UTextureRenderTarget2D* DisplacementRT_B;
+	UOceanProfile* Profile_B;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
+	UTextureRenderTarget2D* HeightRT_B;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "OceanInput")
+	UTextureRenderTarget2D* NormalRT_B;
 
 
 	UOceanRender();

@@ -84,9 +84,9 @@ public:
 
 	~UOceanTexture();
 
-	void Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, const FOceanParameterStruct& OceanParameters);
+	void Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, uint8 HeightFormat, uint8 NormalFormat, const FOceanParameterStruct& OceanParameters);
 
-	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestRHITexture, FRHICommandListImmediate& CommandList);
+	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestHeightTexture, FRHITexture* DestNormalTexture, FRHICommandListImmediate& CmdList);
 
 
 private:
@@ -117,8 +117,8 @@ private:
 	FShaderResourceViewRHIRef DTBuffer_SRV;
 	FUnorderedAccessViewRHIRef DTBuffer_UAV;
 
-	FTexture2DRHIRef Displacement_RT;
-	FUnorderedAccessViewRHIRef Displacement_UAV;
+	FTexture2DRHIRef Height_RT;
+	FUnorderedAccessViewRHIRef Height_UAV;
 
 	FTexture2DRHIRef Normal_RT;
 	FUnorderedAccessViewRHIRef Normal_UAV;

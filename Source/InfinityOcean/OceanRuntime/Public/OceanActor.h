@@ -58,22 +58,22 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
-	UOceanProfile* OceanProfile_A;
+	UOceanProfile* Profile_A;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
+	UTextureRenderTarget2D* HeightRT_A;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
 	UTextureRenderTarget2D* NormalRT_A;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
-	UTextureRenderTarget2D* DisplacementRT_A;
+	UOceanProfile* Profile_B;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
-	UOceanProfile* OceanProfile_B;
+	UTextureRenderTarget2D* HeightRT_B;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
 	UTextureRenderTarget2D* NormalRT_B;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
-	UTextureRenderTarget2D* DisplacementRT_B;
 
 
 

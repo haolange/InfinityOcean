@@ -23,7 +23,7 @@ UOceanTexture::~UOceanTexture()
 	HZeroBuffer.Release();
 	HTBuffer.Release();
 	DTBuffer.Release();
-	Displacement_RT.SafeRelease();
+	Height_RT.SafeRelease();
 
 	GaussBuffer_SRV.SafeRelease();
 	HZeroBuffer_SRV.SafeRelease();
@@ -33,7 +33,7 @@ UOceanTexture::~UOceanTexture()
 	HTBuffer_UAV.SafeRelease();
 	DTBuffer_SRV.SafeRelease();
 	DTBuffer_UAV.SafeRelease();
-	Displacement_UAV.SafeRelease();
+	Height_UAV.SafeRelease();
 	Normal_UAV.SafeRelease();
 }
 
@@ -85,7 +85,7 @@ void UOceanTexture::InitOmegaArray(int32 ArraySizeXY, float Period, TResourceArr
 	}
 }
 
-void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, const FOceanParameterStruct& OceanParameters)
+void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, uint8 HeightFormat, uint8 NormalFormat, const FOceanParameterStruct& OceanParameters)
 {
 	check(IsInRenderingThread());
 
@@ -118,21 +118,21 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	DTBuffer_SRV = RHICreateShaderResourceView(DTBuffer.Buffer);
 	DTBuffer_UAV = RHICreateUnorderedAccessView(DTBuffer.Buffer, false, false);
 
-	FRHIResourceCreateInfo DisplacementRT_CreateInfo;
-	Displacement_RT = RHICreateTexture2D(Resolution, Resolution, PF_FloatRGBA, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, DisplacementRT_CreateInfo);
-	Displacement_UAV = RHICreateUnorderedAccessView(Displacement_RT);
+	FRHIResourceCreateInfo HeightRT_CreateInfo;
+	Height_RT = RHICreateTexture2D(Resolution, Resolution, HeightFormat, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, HeightRT_CreateInfo);
+	Height_UAV = RHICreateUnorderedAccessView(Height_RT);
 
 	FRHIResourceCreateInfo NormalRT_CreateInfo;
-	Normal_RT = RHICreateTexture2D(Resolution, Resolution, PF_FloatRGBA, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, NormalRT_CreateInfo);
+	Normal_RT = RHICreateTexture2D(Resolution, Resolution, NormalFormat, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, NormalRT_CreateInfo);
 	Normal_UAV = RHICreateUnorderedAccessView(Normal_RT);
 }
 
-void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestRHITexture, FRHICommandListImmediate& CommandList)
+void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestHeightTexture, FRHITexture* DestNormalTexture, FRHICommandListImmediate& CmdList)
 {
 	check(IsInRenderingThread());
 
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ShaderPlugin_ComputeShader); 
-	SCOPED_DRAW_EVENT(CommandList, ShaderPlugin_Compute);
+	SCOPED_DRAW_EVENT(CmdList, ShaderPlugin_Compute);
 
 	//Paper UnifromBuffer
 	float FFT_Norm = FMath::Pow((float)Resolution, -0.25f);
@@ -168,8 +168,8 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 			HZeroParameter.Input_SRV_GaussBuffer = GaussBuffer_SRV;
 			HZeroParameter.Output_UAV_HZeroBuffer = HZeroBuffer_UAV;
 		}
-		FComputeShaderUtils::Dispatch( CommandList, OceanShader_HZero, HZeroParameter, FIntVector(1, Resolution, 1) );
-		//CommandList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, HZeroBuffer_UAV);
+		FComputeShaderUtils::Dispatch(CmdList, OceanShader_HZero, HZeroParameter, FIntVector(1, Resolution, 1));
+		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, HZeroBuffer_UAV);
 	}
 
 	//Dispatch ComputeSpecturm 
@@ -183,9 +183,9 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 			HTDTParameter.Output_UAV_HTBuffer = HTBuffer_UAV;
 			HTDTParameter.Output_UAV_DTBuffer = DTBuffer_UAV;
 		}
-		FComputeShaderUtils::Dispatch( CommandList, OceanShader_Specturm, HTDTParameter, FIntVector(1, Resolution / 2 + 1, 1) );
-		//CommandList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, HTBuffer_UAV);
-		//CommandList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, DTBuffer_UAV);
+		FComputeShaderUtils::Dispatch(CmdList, OceanShader_Specturm, HTDTParameter, FIntVector(1, Resolution / 2 + 1, 1));
+		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, HTBuffer_UAV);
+		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, DTBuffer_UAV);
 	}
 
 	//Dispatch ComputeDisplacement 
@@ -196,13 +196,30 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 			DisplacementParameter.UniformBuffer = OceanUniformBufferRef;
 			DisplacementParameter.Input_SRV_HTBuffer = HTBuffer_SRV;
 			DisplacementParameter.Input_SRV_DTBuffer = DTBuffer_SRV;
-			DisplacementParameter.Output_UAV_DisplacementTexture = Displacement_UAV;
+			DisplacementParameter.Output_UAV_DisplacementTexture = Height_UAV;
 		}
-		FComputeShaderUtils::Dispatch( CommandList, OceanShader_Displacement, DisplacementParameter, FIntVector(1, Resolution, 1) );
-		//CommandList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToGfx, Displacement_UAV);
+		FComputeShaderUtils::Dispatch(CmdList, OceanShader_Displacement, DisplacementParameter, FIntVector(1, Resolution, 1));
+		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToGfx, Displacement_UAV);
 	}
 
-	//ClearUAV(CommandList, Displacement_UAV, Resolution, Resolution, FLinearColor(1, 0, 0, 0));
-	CommandList.CopyToResolveTarget(Displacement_RT, DestRHITexture, FResolveParams());
+	//Dispatch ComputeNormalFloading
+	TShaderMapRef<FOceanShader_NormalFoading> OceanShader_NormalFloding(GetGlobalShaderMap(FeatureLevel));
+	{
+		FOceanShader_NormalFoading::FParameters NormalFlodingParameter;
+		{
+			NormalFlodingParameter.SizeScale = FVector4((float)Resolution, (float)Resolution, 1 / (float)Resolution, 1 / (float)Resolution);
+			NormalFlodingParameter.VectorTexture = Height_RT;
+			NormalFlodingParameter.VectorTextureSampler = TStaticSamplerState<SF_Bilinear, AM_Wrap, AM_Wrap, AM_Wrap>::GetRHI();
+			NormalFlodingParameter.Output_UAV_NormalFomeTexture = Normal_UAV;
+		}
+		FComputeShaderUtils::Dispatch(CmdList, OceanShader_NormalFloding, NormalFlodingParameter, FIntVector(Resolution / 16, Resolution / 16, 1));
+		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToGfx, Displacement_UAV);
+	}
+
+	CmdList.CopyTexture(Height_RT, DestHeightTexture, FRHICopyTextureInfo());
+	CmdList.CopyTexture(Normal_RT, DestNormalTexture, FRHICopyTextureInfo());
+	//CmdList.CopyToResolveTarget(Height_RT, DestHeightTexture, FResolveParams());
+	//CmdList.CopyToResolveTarget(Normal_RT, DestNormalTexture, FResolveParams());
+	//ClearUAV(CmdList, Displacement_UAV, Resolution, Resolution, FLinearColor(1, 0, 0, 0));
 }
 #pragma optimize("", on)
