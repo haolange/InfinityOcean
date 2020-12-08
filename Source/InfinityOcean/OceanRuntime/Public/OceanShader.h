@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "GlobalShader.h" 
 #include "UObject/ObjectMacros.h"
-#include "ShaderParameterMacros.h"
 #include "ShaderParameterStruct.h"
+#include "ShaderParameterMacros.h"
 
 
 ////////////////////////////Unifrom Buffer

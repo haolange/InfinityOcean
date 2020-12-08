@@ -24,7 +24,7 @@ public class OceanEditor : ModuleRules
 
         PrivateIncludePaths.AddRange(
             new string[] {
-                "OceanEditor/Private"
+                "OceanRuntime"
          });
     }
 }

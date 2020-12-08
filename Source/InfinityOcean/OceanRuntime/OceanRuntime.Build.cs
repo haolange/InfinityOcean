@@ -45,7 +45,6 @@ public class OceanRuntime : ModuleRules
 				"EditorStyle",
 				"AssetTools",
 				"GraphEditor",
-				"Projects",
 				"ProceduralMeshComponent"
 				// ... add private dependencies that you statically link with here ...	
 			}
