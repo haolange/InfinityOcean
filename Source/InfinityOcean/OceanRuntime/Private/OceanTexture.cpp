@@ -10,6 +10,8 @@
 #include "ShaderParameterUtils.h"
 #include "ShaderParameterStruct.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/Public/SceneUtils.h"
+//#include "PostProcess/SceneRenderTargets.h"
 
 UOceanTexture::UOceanTexture()
 {
@@ -221,5 +223,7 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	//CmdList.CopyToResolveTarget(Height_RT, DestHeightTexture, FResolveParams());
 	//CmdList.CopyToResolveTarget(Normal_RT, DestNormalTexture, FResolveParams());
 	//ClearUAV(CmdList, Displacement_UAV, Resolution, Resolution, FLinearColor(1, 0, 0, 0));
+
+	//FSceneRenderTargets& SceneContext = FSceneRenderTargets::Get(CmdList);
 }
 #pragma optimize("", on)
