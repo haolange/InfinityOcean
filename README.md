@@ -5,7 +5,7 @@ It's a environment feature solution for ocean render&simulation and windfiled si
 Ocean : 
 * Time Based Ocean Fome.
 * GPU Acceleration IFFT for OceanDisplacement.
-* Continue Distance LOD for InfinityOcean Plane.
+* Continue Distance LOD for Infinity OceanPlane.
     
 SurfaceDefrom : 
 * Heightfield Based WaterSurface DefromEffects.
