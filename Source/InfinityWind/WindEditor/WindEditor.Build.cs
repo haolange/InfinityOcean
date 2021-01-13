@@ -1,8 +1,8 @@
 using UnrealBuildTool;
 
-public class OceanEditor : ModuleRules
+public class WindEditor : ModuleRules
 {
-	public OceanEditor(ReadOnlyTargetRules Target) : base(Target)
+	public WindEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 

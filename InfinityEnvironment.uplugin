@@ -24,6 +24,16 @@
 			"Name": "OceanEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "WindRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		},
+		{
+			"Name": "WindEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 
