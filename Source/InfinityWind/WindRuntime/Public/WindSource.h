@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "WindSourceActor.generated.h"
+#include "WindSource.generated.h"
 
 UCLASS()
-class WINDRUNTIME_API AWindSourceActor : public AActor
+class WINDRUNTIME_API AWindSource : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AWindSourceActor();
+	AWindSource();
 
 	virtual void BeginPlay() override;
 
