@@ -24,7 +24,7 @@ void FOceanEditorModule::StartupModule()
 
 	///Rigister Asset Icon
 	OceanProfileStyleIcon = MakeShareable(new FSlateStyleSet("OceanProfileStyle"));
-	FString ResourceDir = IPluginManager::Get().FindPlugin("InfinityEnvironment")->GetBaseDir();
+	FString ResourceDir = IPluginManager::Get().FindPlugin("InfinityOcean")->GetBaseDir();
 	OceanProfileStyleIcon->SetContentRoot(ResourceDir);
 
 	FSlateImageBrush* OceanProfileBrush = new FSlateImageBrush

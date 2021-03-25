@@ -47,7 +47,7 @@ public:
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters);
 	static void ModifyCompilationEnvironment(const FGlobalShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment);
 };
-IMPLEMENT_SHADER_TYPE(, FOceanShader_HZero, TEXT("/Plugin/InfinityEnvironment/Private/Ocean/Ocean_ComputeHZero.usf"), TEXT("ComputeHZero"), SF_Compute)
+IMPLEMENT_SHADER_TYPE(, FOceanShader_HZero, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeHZero.usf"), TEXT("ComputeHZero"), SF_Compute)
 
 
 ////////////////////////////Compute Specturm
@@ -69,7 +69,7 @@ public:
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters);
 	static void ModifyCompilationEnvironment(const FGlobalShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment);
 };
-IMPLEMENT_SHADER_TYPE(, FOceanShader_Specturm, TEXT("/Plugin/InfinityEnvironment/Private/Ocean/Ocean_ComputeSpecturm.usf"), TEXT("ComputeSpecturm"), SF_Compute)
+IMPLEMENT_SHADER_TYPE(, FOceanShader_Specturm, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeSpecturm.usf"), TEXT("ComputeSpecturm"), SF_Compute)
 
 
 ////////////////////////////Compute Displacement
@@ -90,7 +90,7 @@ public:
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters);
 	static void ModifyCompilationEnvironment(const FGlobalShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment);
 };
-IMPLEMENT_SHADER_TYPE(, FOceanShader_Displacement, TEXT("/Plugin/InfinityEnvironment/Private/Ocean/Ocean_ComputeDisplacement.usf"), TEXT("ComputeDisplacement"), SF_Compute)
+IMPLEMENT_SHADER_TYPE(, FOceanShader_Displacement, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeDisplacement.usf"), TEXT("ComputeDisplacement"), SF_Compute)
 
 
 ////////////////////////////Compute NormalFoading
@@ -111,4 +111,4 @@ public:
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters);
 	static void ModifyCompilationEnvironment(const FGlobalShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment);
 };
-IMPLEMENT_SHADER_TYPE(, FOceanShader_NormalFoading, TEXT("/Plugin/InfinityEnvironment/Private/Ocean/Ocean_ComputeNormalFoading.usf"), TEXT("ComputeNormalFoading"), SF_Compute)
+IMPLEMENT_SHADER_TYPE(, FOceanShader_NormalFoading, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeNormalFoading.usf"), TEXT("ComputeNormalFoading"), SF_Compute)

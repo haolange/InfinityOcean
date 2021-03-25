@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "InfinityEnvironment",
+	"FriendlyName": "InfinityOcean",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "",
@@ -22,16 +22,6 @@
 		},
 		{
 			"Name": "OceanEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "WindRuntime",
-			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
-		},
-		{
-			"Name": "WindEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}

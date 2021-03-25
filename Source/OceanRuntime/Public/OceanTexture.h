@@ -57,13 +57,15 @@ struct FOceanGPUBuffer
 
 	FOceanGPUBuffer() {}
 
-	void Initialize(uint32 BytesPerElement, uint32 NumElements) {
+	void Initialize(uint32 BytesPerElement, uint32 NumElements) 
+	{
 		FRHIResourceCreateInfo CreateInfo;
 		Buffer = RHICreateStructuredBuffer(BytesPerElement, BytesPerElement * NumElements, BUF_ShaderResource | BUF_UnorderedAccess, CreateInfo);
 	}
 
 	template <typename T>
-	void Initialize(uint32 BytesPerElement, uint32 NumElements, TResourceArray<T> BufferData) {
+	void Initialize(uint32 BytesPerElement, uint32 NumElements, TResourceArray<T> BufferData) 
+	{
 		FRHIResourceCreateInfo CreateInfo(&BufferData);
 		Buffer = RHICreateStructuredBuffer(BytesPerElement, BytesPerElement * NumElements, BUF_ShaderResource | BUF_UnorderedAccess , CreateInfo);
 	}
