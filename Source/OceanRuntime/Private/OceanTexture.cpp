@@ -91,10 +91,10 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 {
 	check(IsInRenderingThread());
 
-	//Paper StructBuffer
 	TResourceArray<FVector2D> GaussArray;
 	InitGaussArray(Resolution, GaussArray);
-	for (int32 i = 0; i < Resolution; ++i) {
+	for (int32 i = 0; i < Resolution; ++i) 
+	{
 		FMemory::Memmove(GaussArray.GetData(), GaussArray.GetData() + i * (Resolution + 4), Resolution * sizeof(FVector2D));
 	}
 	GaussBuffer.Initialize(sizeof(FVector2D), GaussArray.Num(), GaussArray);
@@ -106,7 +106,8 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 
 	TResourceArray<float> OmegaArray;
 	InitOmegaArray(Resolution, OceanParameters.Period, OmegaArray);
-	for (int32 i = 0; i < (Resolution / 2 + 1); ++i) {
+	for (int32 i = 0; i < (Resolution / 2 + 1); ++i) 
+	{
 		FMemory::Memmove(OmegaArray.GetData() + i * (Resolution / 2 + 1), OmegaArray.GetData() + i * (Resolution + 4), (Resolution / 2 + 1) * sizeof(float));
 	}
 	OmegaBuffer.Initialize(sizeof(float), OmegaArray.Num(), OmegaArray);
@@ -223,7 +224,6 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	//CmdList.CopyToResolveTarget(Height_RT, DestHeightTexture, FResolveParams());
 	//CmdList.CopyToResolveTarget(Normal_RT, DestNormalTexture, FResolveParams());
 	//ClearUAV(CmdList, Displacement_UAV, Resolution, Resolution, FLinearColor(1, 0, 0, 0));
-
 	//FSceneRenderTargets& SceneContext = FSceneRenderTargets::Get(CmdList);
 }
 #pragma optimize("", on)

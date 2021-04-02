@@ -12,19 +12,16 @@ void ComputeNormalFoading(uint3 ThreadId : SV_DispatchThreadID)
 {
 	float2 UV = (ThreadId.xy + 0.5) * SizeScale.zw;
 
-	float3 Center = VectorTexture.SampleLevel(VectorTextureSampler, UV, 0).xyz;
-	float3 Left = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(-1, 0) / SizeScale.xy), 0).xyz;
-	float3 Right = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(1, 0) / SizeScale.xy), 0).xyz;
-	float3 Top = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, -1) / SizeScale.xy), 0).xyz;
-	float3 Bottom = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, 1) / SizeScale.xy), 0).xyz;
+	float3 Left = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(-1, 0) * SizeScale.zw), 0).xyz;
+	float3 Right = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(1, 0) * SizeScale.zw), 0).xyz;
+	float3 Top = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, -1) * SizeScale.zw), 0).xyz;
+	float3 Bottom = VectorTexture.SampleLevel(VectorTextureSampler, UV + (int2(0, 1) * SizeScale.zw), 0).xyz;
 
-	float3 Dx = (Left.xyz - Right.xyz);
-	float3 Dy = (Top.xyz - Bottom.xyz);
+	float3 Dx = Right - Left;
+	float3 Dy = Bottom - Top;
 	float J = (1 + Dx.x) * (1 + Dy.y) - Dx.y * Dy.x;
 
-	float Floding = max(1 -J, 0); 
-	float3 Gradient = normalize(float3(Dx.z, 0.1, Dy.z) );
-	Gradient = float3(-Gradient.x, -Gradient.z, Gradient.y);
-
+	float Floding = max(1 - J, 0); 
+	float3 Gradient = normalize(float3(-Dx.z, -Dy.z, 0.1));
 	Output_UAV_NormalFomeTexture[ThreadId.xy] = float4(Gradient, Floding);
 }
