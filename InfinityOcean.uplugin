@@ -16,14 +16,14 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "OceanRuntime",
-			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
-		},
-		{
 			"Name": "OceanEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "OceanRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
 		}
 	],
 
