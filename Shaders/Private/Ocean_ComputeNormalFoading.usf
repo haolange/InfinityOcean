@@ -22,6 +22,6 @@ void ComputeNormalFoading(uint3 ThreadId : SV_DispatchThreadID)
 	float J = (1 + Dx.x) * (1 + Dy.y) - Dx.y * Dy.x;
 
 	float Floding = max(1 - J, 0); 
-	float3 Gradient = normalize(float3(-Dx.z, -Dy.z, 0.1));
+	float3 Gradient = normalize(float3(-Dx.z, -Dy.z, 0.5));
 	Output_UAV_NormalFomeTexture[ThreadId.xy] = float4(Gradient, Floding);
 }
