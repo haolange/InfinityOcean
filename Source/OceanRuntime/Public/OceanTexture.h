@@ -70,7 +70,8 @@ struct FOceanGPUBuffer
 		Buffer = RHICreateStructuredBuffer(BytesPerElement, BytesPerElement * NumElements, BUF_ShaderResource | BUF_UnorderedAccess , CreateInfo);
 	}
 
-	void Release() {
+	void Release() 
+	{
 		Buffer.SafeRelease();
 	}
 };
