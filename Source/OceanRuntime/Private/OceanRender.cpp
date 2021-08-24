@@ -15,7 +15,7 @@ UOceanRender::~UOceanRender()
 }
 
 PRAGMA_DISABLE_OPTIMIZATION
-bool UOceanRender::ShouldDrawTexture()
+bool UOceanRender::CanDraw()
 {
 	return Profile_A && Profile_B && HeightRT_A && NormalRT_A && HeightRT_B && NormalRT_B;
 }
@@ -69,7 +69,9 @@ void UOceanRender::BeginPlay()
 
 	OceanTexture_A = NewObject<UOceanTexture>();
 	OceanTexture_B = NewObject<UOceanTexture>();
-	if (ShouldDrawTexture()) {
+
+	if (CanDraw()) 
+	{
 		InitTexture();
 	}
 }
@@ -78,7 +80,8 @@ void UOceanRender::TickComponent(float DeltaSeconds, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaSeconds, TickType, ThisTickFunction);
 
-	if (ShouldDrawTexture()) {
+	if (CanDraw()) 
+	{
 		DrawTexture(GetWorld()->GetTimeSeconds());
 	}
 }
