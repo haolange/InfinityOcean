@@ -53,7 +53,7 @@ private:
 	UPROPERTY()
 	UOceanTexture* OceanTexture_B;
 
-	bool CanDraw();
+	inline bool CanSimulation();
 
 	void InitTexture();
 

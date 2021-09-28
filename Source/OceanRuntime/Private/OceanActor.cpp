@@ -30,7 +30,7 @@ void AOceanActor::OnConstruction(const FTransform& Transform)
 	OceanRenderer->NormalRT_B = NormalRT_B;
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
+//PRAGMA_DISABLE_OPTIMIZATION
 void AOceanActor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -217,4 +217,4 @@ USceneComponent* AOceanActor::CreateLOD(int LodIndex, bool bBiggestLOD, const FO
 	}
 	return ParentRoot;
 }
-PRAGMA_ENABLE_OPTIMIZATION
+//PRAGMA_ENABLE_OPTIMIZATION

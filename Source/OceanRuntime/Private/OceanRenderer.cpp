@@ -14,14 +14,16 @@ UOceanRenderer::~UOceanRenderer()
 	OceanTexture_B = nullptr;
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
-bool UOceanRenderer::CanDraw()
+//PRAGMA_DISABLE_OPTIMIZATION
+inline bool UOceanRenderer::CanSimulation()
 {
 	return Profile_A && Profile_B && HeightRT_A && NormalRT_A && HeightRT_B && NormalRT_B;
 }
 
 void UOceanRenderer::InitTexture()
 {
+	OceanTexture_A = NewObject<UOceanTexture>();
+	OceanTexture_B = NewObject<UOceanTexture>();
 	ERHIFeatureLevel::Type FeatureLevel = GetWorld()->Scene->GetFeatureLevel();
 
 	ENQUEUE_RENDER_COMMAND(InitOceanTexture)
@@ -66,23 +68,16 @@ void UOceanRenderer::PostEditChangeProperty(struct FPropertyChangedEvent& Proper
 void UOceanRenderer::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!CanSimulation()) { return; }
 
-	OceanTexture_A = NewObject<UOceanTexture>();
-	OceanTexture_B = NewObject<UOceanTexture>();
-
-	if (CanDraw()) 
-	{
-		InitTexture();
-	}
+	InitTexture();
 }
 
 void UOceanRenderer::TickComponent(float DeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaSeconds, TickType, ThisTickFunction);
+	if (!CanSimulation()) { return; }
 
-	if (CanDraw()) 
-	{
-		DrawTexture(GetWorld()->GetTimeSeconds());
-	}
+	DrawTexture(GetWorld()->GetTimeSeconds());
 }
-PRAGMA_ENABLE_OPTIMIZATION
+//PRAGMA_ENABLE_OPTIMIZATION

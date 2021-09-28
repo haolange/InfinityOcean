@@ -89,7 +89,7 @@ public:
 
 	void Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, uint8 HeightFormat, uint8 NormalFormat, const FOceanParameterStruct& OceanParameters);
 
-	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestHeightTexture, FRHITexture* DestNormalTexture, FRHICommandListImmediate& CmdList);
+	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList);
 
 
 private:

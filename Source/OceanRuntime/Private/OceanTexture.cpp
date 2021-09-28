@@ -130,7 +130,7 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	Normal_UAV = RHICreateUnorderedAccessView(Normal_RT);
 }
 
-void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DestHeightTexture, FRHITexture* DestNormalTexture, FRHICommandListImmediate& CmdList)
+void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList)
 {
 	check(IsInRenderingThread());
 
@@ -219,8 +219,8 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToGfx, Displacement_UAV);
 	}
 
-	CmdList.CopyTexture(Height_RT, DestHeightTexture, FRHICopyTextureInfo());
-	CmdList.CopyTexture(Normal_RT, DestNormalTexture, FRHICopyTextureInfo());
+	CmdList.CopyTexture(Height_RT, DscHeightTexture, FRHICopyTextureInfo());
+	CmdList.CopyTexture(Normal_RT, DscNormalTexture, FRHICopyTextureInfo());
 	//CmdList.CopyToResolveTarget(Height_RT, DestHeightTexture, FResolveParams());
 	//CmdList.CopyToResolveTarget(Normal_RT, DestNormalTexture, FResolveParams());
 	//ClearUAV(CmdList, Displacement_UAV, Resolution, Resolution, FLinearColor(1, 0, 0, 0));
