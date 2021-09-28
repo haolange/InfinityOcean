@@ -3,10 +3,10 @@
 #include "CoreMinimal.h"
 #include "OceanProfile.h"
 #include "OceanTexture.h"
-#include "OceanRender.generated.h"
+#include "OceanRenderer.generated.h"
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), hideCategories = (Tags, Activation, Cooking, AssetUserData, Collision))
-class OCEANRUNTIME_API UOceanRender : public UActorComponent
+class OCEANRUNTIME_API UOceanRenderer : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -32,9 +32,9 @@ public:
 	UTextureRenderTarget2D* NormalRT_B;
 
 
-	UOceanRender();
+	UOceanRenderer();
 
-	~UOceanRender();
+	~UOceanRenderer();
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;

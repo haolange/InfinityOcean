@@ -2,9 +2,9 @@
 
 #include "OceanMesh.h"
 #include "CoreMinimal.h"
-#include "OceanRender.h"
 #include "OceanProfile.h"
 #include "ObjectMacros.h"
+#include "OceanRenderer.h"
 #include "GameFramework/Actor.h"
 #include "OceanActor.generated.h"
 
@@ -54,7 +54,7 @@ public:
 
 
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "OceanComponent")
-	UOceanRender* OceanRender;
+	UOceanRenderer* OceanRenderer;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")

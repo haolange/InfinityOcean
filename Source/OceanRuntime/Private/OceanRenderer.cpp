@@ -1,26 +1,26 @@
-#include "OceanRender.h"
+#include "OceanRenderer.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-UOceanRender::UOceanRender()
+UOceanRenderer::UOceanRenderer()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-UOceanRender::~UOceanRender()
+UOceanRenderer::~UOceanRenderer()
 {
 	OceanTexture_A = nullptr;
 	OceanTexture_B = nullptr;
 }
 
 PRAGMA_DISABLE_OPTIMIZATION
-bool UOceanRender::CanDraw()
+bool UOceanRenderer::CanDraw()
 {
 	return Profile_A && Profile_B && HeightRT_A && NormalRT_A && HeightRT_B && NormalRT_B;
 }
 
-void UOceanRender::InitTexture()
+void UOceanRenderer::InitTexture()
 {
 	ERHIFeatureLevel::Type FeatureLevel = GetWorld()->Scene->GetFeatureLevel();
 
@@ -37,7 +37,7 @@ void UOceanRender::InitTexture()
 	);
 }
 
-void UOceanRender::DrawTexture(float SimulationTime)
+void UOceanRenderer::DrawTexture(float SimulationTime)
 {
 	ERHIFeatureLevel::Type FeatureLevel = GetWorld()->Scene->GetFeatureLevel();
 
@@ -57,13 +57,13 @@ void UOceanRender::DrawTexture(float SimulationTime)
 }
 
 #if WITH_EDITOR
-void UOceanRender::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+void UOceanRenderer::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 #endif
 
-void UOceanRender::BeginPlay()
+void UOceanRenderer::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -76,7 +76,7 @@ void UOceanRender::BeginPlay()
 	}
 }
 
-void UOceanRender::TickComponent(float DeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UOceanRenderer::TickComponent(float DeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaSeconds, TickType, ThisTickFunction);
 

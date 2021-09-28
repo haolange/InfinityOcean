@@ -8,7 +8,7 @@ AOceanActor::AOceanActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<UBillboardComponent>(TEXT("RootComponent"));
-	OceanRender = CreateDefaultSubobject<UOceanRender>(TEXT("OceanRenderComponent"));
+	OceanRenderer = CreateDefaultSubobject<UOceanRenderer>(TEXT("OceanRenderComponent"));
 }
 
 #if WITH_EDITOR
@@ -22,12 +22,12 @@ void AOceanActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	OceanRender->Profile_A = Profile_A;
-	OceanRender->Profile_B = Profile_B;
-	OceanRender->HeightRT_A = HeightRT_A;
-	OceanRender->NormalRT_A = NormalRT_A;
-	OceanRender->HeightRT_B = HeightRT_B;
-	OceanRender->NormalRT_B = NormalRT_B;
+	OceanRenderer->Profile_A = Profile_A;
+	OceanRenderer->Profile_B = Profile_B;
+	OceanRenderer->HeightRT_A = HeightRT_A;
+	OceanRenderer->NormalRT_A = NormalRT_A;
+	OceanRenderer->HeightRT_B = HeightRT_B;
+	OceanRenderer->NormalRT_B = NormalRT_B;
 }
 
 PRAGMA_DISABLE_OPTIMIZATION

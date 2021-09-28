@@ -1,9 +1,10 @@
 #pragma once
 
-#include "OceanRender.h"
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "OceanRenderer.h"
 #include "ProceduralMeshComponent.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+
 #include "OceanUtillity.generated.h"
 
 UCLASS()
