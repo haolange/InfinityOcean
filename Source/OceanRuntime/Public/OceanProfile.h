@@ -40,11 +40,10 @@ public:
 	UPROPERTY()
 	FOceanParameterStruct Parameters;
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+public:
+	#if WITH_EDITOR
+		virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	#endif
 
 	UFUNCTION(BlueprintCallable, Category = "WaveParameter")
 	void UpdateParameter();

@@ -1,11 +1,8 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "PrimitiveSceneProxy.h"
 #include "Components/MeshComponent.h"
-
 #include "OceanMesh.generated.h"
-
 
 PRAGMA_DISABLE_OPTIMIZATION
 enum EOceanPatchType
@@ -28,12 +25,10 @@ struct FOceanMeshBatch
 {
 	GENERATED_BODY()
 
+public:
 	FBox BoundBox;
-
 	EOceanPatchType PatchType;
-
 	TArray<uint32> IndexArray;
-
 	TArray<FVector> VertexArray;
 };
 
@@ -43,15 +38,13 @@ struct FOceanMeshBuilder
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY()
 	TArray<FOceanMeshBatch> OceanMeshBatchs;
 
+public:
 	void Build(int NumQuad, float MaxScaleHeight);
 
-
 private:
-
 	FOceanMeshBatch BuildOceanPatch(EOceanPatchType Patch, int NumQuad, float MaxScaleHeight);
 };
 
@@ -63,7 +56,6 @@ class OCEANRUNTIME_API UOceanMesh : public UMeshComponent
 	GENERATED_BODY()
 	
 public:
-
 	int LodIndex;
 	int NumLOD;
 	int NumQuad;
@@ -72,6 +64,7 @@ public:
 	UPROPERTY()
 	FOceanMeshBatch OceanMeshBatch;
 
+public:
 	UOceanMesh();
 
 	~UOceanMesh();
@@ -101,9 +94,6 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;	
-
-private:
-
 };
 
 // OceanMesh IndexBuffer
@@ -112,6 +102,7 @@ class FOceanMeshIndexBuffer : public FIndexBuffer
 public:
 	TArray<uint32> Indices;
 
+public:
 	virtual void InitRHI() override
 	{
 		FRHIResourceCreateInfo CreateInfo;
@@ -127,14 +118,16 @@ public:
 // OceanMesh VertexFactory
 class FOceanMeshSceneProxy : public FPrimitiveSceneProxy
 {
+private:
+	UPROPERTY()
+	UMaterialInterface* Material;
+
+	FLocalVertexFactory VertexFactory;
+	FMaterialRelevance MaterialRelevance;
+	FOceanMeshIndexBuffer IndexBuffer;
+	FStaticMeshVertexBuffers VertexBuffers;
+
 public:
-
-	SIZE_T GetTypeHash() const override
-	{
-		static size_t UniquePointer;
-		return reinterpret_cast<size_t>(&UniquePointer);
-	}
-
 	FOceanMeshSceneProxy(UOceanMesh* Component) : FPrimitiveSceneProxy(Component)
 		, Material(NULL)
 		, VertexFactory(GetScene().GetFeatureLevel(), "FOceanPatchMeshSceneProxy")
@@ -255,21 +248,25 @@ public:
 		return Result;
 	}
 
-	virtual bool CanBeOccluded() const override { return !MaterialRelevance.bDisableDepthTest; }
+	virtual bool CanBeOccluded() const override 
+	{ 
+		return !MaterialRelevance.bDisableDepthTest; 
+	}
 
-	virtual uint32 GetMemoryFootprint(void) const override { return(sizeof(*this) + GetAllocatedSize()); }
+	virtual uint32 GetMemoryFootprint(void) const override 
+	{ 
+		return(sizeof(*this) + GetAllocatedSize()); 
+	}
 
-	uint32 GetAllocatedSize(void) const { return(FPrimitiveSceneProxy::GetAllocatedSize()); }
+	SIZE_T GetTypeHash() const override
+	{
+		static size_t UniquePointer;
+		return reinterpret_cast<size_t>(&UniquePointer);
+	}
 
-private:
-
-	UPROPERTY()
-		UMaterialInterface* Material;
-
-	FOceanMeshIndexBuffer IndexBuffer;
-	FStaticMeshVertexBuffers VertexBuffers;
-	FLocalVertexFactory VertexFactory;
-	FMaterialRelevance MaterialRelevance;
+	uint32 GetAllocatedSize(void) const 
+	{ 
+		return(FPrimitiveSceneProxy::GetAllocatedSize()); 
+	}
 };
-
 PRAGMA_ENABLE_OPTIMIZATION

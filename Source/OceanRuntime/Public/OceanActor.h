@@ -1,5 +1,4 @@
 #pragma once
-
 #include "OceanMesh.h"
 #include "CoreMinimal.h"
 #include "OceanProfile.h"
@@ -8,18 +7,14 @@
 #include "GameFramework/Actor.h"
 #include "OceanActor.generated.h"
 
-
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), hideCategories = (Replication, Collision, Input, Actor, LOD, Cooking))
 class OCEANRUNTIME_API AOceanActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
-
 	float LodAlphaBlackPointFade;
-
 	float LodAlphaBlackWhitePointFade;
-
 	float ViewerAltitudeLevelAlpha;
 
 	UPROPERTY()
@@ -52,10 +47,8 @@ public:
 	UPROPERTY()
 	FVector PreSetLocation = FVector::ZeroVector;
 
-
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "OceanComponent")
 	UOceanRenderer* OceanRenderer;
-
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
 	UOceanProfile* Profile_A;
@@ -75,8 +68,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "WaveData")
 	UTextureRenderTarget2D* NormalRT_B;
 
-
-
+public:
 	AOceanActor();
 
 #if WITH_EDITOR
@@ -90,7 +82,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void BeginDestroy() override;
-
 
 private:
 	UFUNCTION(Category = "InfinityOcean")

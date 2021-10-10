@@ -1,5 +1,4 @@
 #include "OceanTexture.h"
-
 #include "RHI.h"
 #include "Shader.h"
 #include "ClearQuad.h"

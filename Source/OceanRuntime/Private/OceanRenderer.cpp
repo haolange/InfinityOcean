@@ -1,5 +1,4 @@
 #include "OceanRenderer.h"
-
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 

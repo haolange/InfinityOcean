@@ -13,31 +13,32 @@ struct FOceanParameterStruct
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float Period;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float TimeScale;
+	float Period;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float Choppyness;
+	float TimeScale;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float Fraction;
+	float Choppyness;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float Aplitude;
+	float Fraction;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float WindDependency;
+	float Aplitude;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		float WindSpeed;
+	float WindDependency;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
-		FVector2D WindDir;
+	float WindSpeed;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InfinityOcean")
+	FVector2D WindDir;
 
+public:
 	FOceanParameterStruct()
 	{
 		Period = 8;
@@ -53,9 +54,14 @@ struct FOceanParameterStruct
 
 struct FOceanGPUBuffer
 {
+public:
 	FStructuredBufferRHIRef Buffer;
 
-	FOceanGPUBuffer() {}
+public:
+	FOceanGPUBuffer() 
+	{
+
+	}
 
 	void Initialize(uint32 BytesPerElement, uint32 NumElements) 
 	{
@@ -81,25 +87,10 @@ class OCEANRUNTIME_API UOceanTexture : public UObject
 {
 	GENERATED_BODY()
 
-public:
-
-	UOceanTexture();
-
-	~UOceanTexture();
-
-	void Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, uint8 HeightFormat, uint8 NormalFormat, const FOceanParameterStruct& OceanParameters);
-
-	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList);
-
-
 private:
-
 	const float TwoPi = 6.28318530718f;
-
 	const float Gravity = 9.810f;
-
 	const float SqrtHalf = 0.707106781186f;
-
 	const float Euler = 2.71828182846f;
 
 	FOceanGPUBuffer GaussBuffer;
@@ -126,6 +117,16 @@ private:
 	FTexture2DRHIRef Normal_RT;
 	FUnorderedAccessViewRHIRef Normal_UAV;
 
+public:
+	UOceanTexture();
+
+	~UOceanTexture();
+
+	void Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, uint8 HeightFormat, uint8 NormalFormat, const FOceanParameterStruct& OceanParameters);
+
+	void Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList);
+
+private:
 	float GaussValue();
 
 	void InitGaussArray(int32 ArraySizeXY, TResourceArray<FVector2D>& GaussArrayRef);

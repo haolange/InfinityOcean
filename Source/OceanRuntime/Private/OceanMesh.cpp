@@ -1,5 +1,4 @@
 #include "OceanMesh.h"
-
 #include "OceanActor.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/RenderCore/Public/RenderResource.h"

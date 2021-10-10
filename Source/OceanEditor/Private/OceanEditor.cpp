@@ -5,10 +5,10 @@
 #include "AssetToolsModule.h"
 #include "Modules/ModuleManager.h"
 #include "Templates/SharedPointer.h"
+#include "OceanProfileCreateAction.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
-#include "AssetActions_CreateOceanProfile.h"
-#include "OceanRuntime\Public\OceanProfile.h"
+#include "OceanRuntime/Public/OceanProfile.h"
 
 #define LOCTEXT_NAMESPACE "FOceanEditorModule"
 
@@ -19,7 +19,7 @@ void FOceanEditorModule::StartupModule()
 
 	///Rigister Asset Category
 	InfinityOceanCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Infinity Ocean")), LOCTEXT("InfinityOceanCategory", "InfinityOcean"));
-	OceanAssetAction = new FAssetActions_CreateOceanProfile(InfinityOceanCategory);
+	OceanAssetAction = new FOceanProfileCreateAction(InfinityOceanCategory);
 	AssetTools.RegisterAssetTypeActions(MakeShareable(OceanAssetAction));
 
 	///Rigister Asset Icon
