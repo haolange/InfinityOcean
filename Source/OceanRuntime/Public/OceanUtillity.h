@@ -13,6 +13,6 @@ class OCEANRUNTIME_API UOceanUtillity : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "OceanUtillity")
+	UFUNCTION(BlueprintCallable, Category = "OceanUtility")
 	static void GeneratePlaneMesh(bool CenterPivot, bool FlipEdge, int NumQuad, float GridSize, FVector OffsetPosition, TArray<int32>& IndexArray, TArray<FVector2D>& UVArray, TArray<FVector>& VertexArray);
 };
