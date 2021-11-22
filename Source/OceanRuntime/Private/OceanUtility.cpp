@@ -1,6 +1,6 @@
-#include "OceanUtillity.h"
+#include "OceanUtility.h"
 
-void UOceanUtillity::GeneratePlaneMesh(bool CenterPivot, bool FlipEdge, int NumQuad, float GridSize, FVector OffsetPosition, TArray<int32>& IndexArray, TArray<FVector2D>& UVArray, TArray<FVector>& VertexArray)
+void UOceanUtility::GeneratePlaneMesh(bool CenterPivot, bool FlipEdge, int NumQuad, float GridSize, FVector OffsetPosition, TArray<int32>& IndexArray, TArray<FVector2D>& UVArray, TArray<FVector>& VertexArray)
 {
 	// VertexBuffer
 	for (int32 j = 0; j < NumQuad + 1; j++)

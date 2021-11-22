@@ -5,10 +5,10 @@
 #include "ProceduralMeshComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 
-#include "OceanUtillity.generated.h"
+#include "OceanUtility.generated.h"
 
 UCLASS()
-class OCEANRUNTIME_API UOceanUtillity : public UBlueprintFunctionLibrary
+class OCEANRUNTIME_API UOceanUtility : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
