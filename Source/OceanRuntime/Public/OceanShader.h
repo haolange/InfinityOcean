@@ -1,13 +1,11 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GlobalShader.h" 
 #include "UObject/ObjectMacros.h"
 #include "ShaderParameterStruct.h"
 #include "ShaderParameterMacros.h"
 
-
-////////////////////////////Unifrom Buffer
+// Unifrom Buffer
 BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT_WITH_CONSTRUCTOR(FOceanUniformBuffer, )
 	SHADER_PARAMETER(int32, Resolution)
 	SHADER_PARAMETER(int32, Resolution_PlusOne)
@@ -26,11 +24,9 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT_WITH_CONSTRUCTOR(FOceanUniformBuffer, )
 
 	SHADER_PARAMETER(FVector2D, WindDir)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
-
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(FOceanUniformBuffer, "OceanParameter");
 
-
-////////////////////////////Compute HZero
+// Compute HZero
 class FOceanShader_HZero : public FGlobalShader
 {
 	DECLARE_SHADER_TYPE(FOceanShader_HZero, Global);
@@ -42,6 +38,7 @@ public:
 		SHADER_PARAMETER_STRUCT_REF(FOceanUniformBuffer, UniformBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float2>, Input_SRV_GaussBuffer)
 		SHADER_PARAMETER_UAV(RWBuffer<float2>, Output_UAV_HZeroBuffer)
+        //SHADER_PARAMETER_UAV(RWTexture2D<float4>, Output_UAV_DisplacementTexture)
 	END_SHADER_PARAMETER_STRUCT()
 
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters);
@@ -49,8 +46,7 @@ public:
 };
 IMPLEMENT_SHADER_TYPE(, FOceanShader_HZero, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeHZero.usf"), TEXT("ComputeHZero"), SF_Compute)
 
-
-////////////////////////////Compute Specturm
+// Compute Specturm
 class FOceanShader_Specturm : public FGlobalShader
 {
 	DECLARE_SHADER_TYPE(FOceanShader_Specturm, Global)
@@ -71,8 +67,7 @@ public:
 };
 IMPLEMENT_SHADER_TYPE(, FOceanShader_Specturm, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeSpecturm.usf"), TEXT("ComputeSpecturm"), SF_Compute)
 
-
-////////////////////////////Compute Displacement
+// Compute Displacement
 class FOceanShader_Displacement : public FGlobalShader
 {
 	DECLARE_SHADER_TYPE(FOceanShader_Displacement, Global)
@@ -92,8 +87,7 @@ public:
 };
 IMPLEMENT_SHADER_TYPE(, FOceanShader_Displacement, TEXT("/Plugin/InfinityOcean/Private/Ocean_ComputeDisplacement.usf"), TEXT("ComputeDisplacement"), SF_Compute)
 
-
-////////////////////////////Compute NormalFoading
+// Compute NormalFoading
 class FOceanShader_NormalFoading : public FGlobalShader
 {
 	DECLARE_SHADER_TYPE(FOceanShader_NormalFoading, Global)
