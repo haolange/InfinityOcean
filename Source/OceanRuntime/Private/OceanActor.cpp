@@ -30,10 +30,14 @@ void AOceanActor::OnConstruction(const FTransform& Transform)
 	OceanRenderer->NormalRT_B = NormalRT_B;
 }
 
-//PRAGMA_DISABLE_OPTIMIZATION
+PRAGMA_DISABLE_OPTIMIZATION
 void AOceanActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UTexture2D* TextureLoad = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Waterline/1_Waterline_Content/Resources/Textures/HDRI/Sunset_Env_S.Sunset_Env_S"));
+	FTexturePlatformData* MipData = TextureLoad->PlatformData;
+	int32 Size = MipData->SizeX;
 
 	OceanMeshLODGroups.Reset();
 	OceanMeshComponents.Reset();
@@ -217,4 +221,4 @@ USceneComponent* AOceanActor::CreateLOD(int LodIndex, bool bBiggestLOD, const FO
 	}
 	return ParentRoot;
 }
-//PRAGMA_ENABLE_OPTIMIZATION
+PRAGMA_ENABLE_OPTIMIZATION
