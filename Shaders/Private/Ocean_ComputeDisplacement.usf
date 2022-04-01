@@ -3,11 +3,9 @@
 #include "/Engine/Private/Common.ush"
 #include "Ocean_Common.ush"
 
-
-Buffer<float2> Input_SRV_HTBuffer;
-Buffer<float4> Input_SRV_DTBuffer;
+StructuredBuffer<float2> Input_SRV_HTBuffer;
+StructuredBuffer<float4> Input_SRV_DTBuffer;
 RWTexture2D<float4> Output_UAV_DisplacementTexture;
-
 
 [numthreads(MAX_FFT_RESOLUTION / 2, 1, 1)] 
 void ComputeDisplacement(uint3 dispatchThreadId : SV_DispatchThreadID) 

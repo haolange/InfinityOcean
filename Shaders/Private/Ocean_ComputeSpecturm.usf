@@ -3,12 +3,10 @@
 #include "/Engine/Private/Common.ush"
 #include "Ocean_Common.ush"
 
-
-Buffer<float> Input_SRV_OmegaBuffer;
-Buffer<float2> Input_SRV_HZeroBuffer;
-RWBuffer<float2> Output_UAV_HTBuffer;
-RWBuffer<float4> Output_UAV_DTBuffer;
-
+StructuredBuffer<float> Input_SRV_OmegaBuffer;
+StructuredBuffer<float2> Input_SRV_HZeroBuffer;
+RWStructuredBuffer<float2> Output_UAV_HTBuffer;
+RWStructuredBuffer<float4> Output_UAV_DTBuffer;
 
 [numthreads(MAX_FFT_RESOLUTION / 2, 1, 1)] 
 void ComputeSpecturm(uint3 dispatchThreadId : SV_DispatchThreadID) 

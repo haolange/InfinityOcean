@@ -2,8 +2,8 @@
 #include "/Engine/Private/Common.ush"
 #include "Ocean_Common.ush"
 
-Buffer<float2> Input_SRV_GaussBuffer;
-RWBuffer<float2> Output_UAV_HZeroBuffer;
+StructuredBuffer<float2> Input_SRV_GaussBuffer;
+RWStructuredBuffer<float2> Output_UAV_HZeroBuffer;
 //RWTexture2D<float4> Output_UAV_DisplacementTexture;
 
 [numthreads(MAX_FFT_RESOLUTION, 1, 1)] 
