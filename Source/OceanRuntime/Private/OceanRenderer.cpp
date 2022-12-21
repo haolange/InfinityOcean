@@ -48,10 +48,10 @@ void UOceanRenderer::DrawTexture(float SimulationTime)
 		{
 			FRHITexture* OutHeight_A = HeightRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
 			FRHITexture* OutNormal_A = NormalRT_A->TextureReference.TextureReferenceRHI->GetReferencedTexture();
+			OceanTexture_A->Draw(FeatureLevel, HeightRT_A->SizeX, SimulationTime, Profile_A->Parameters, OutHeight_A, OutNormal_A, RHICmdList);
+
 			FRHITexture* OutHeight_B = HeightRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
 			FRHITexture* OutNormal_B = NormalRT_B->TextureReference.TextureReferenceRHI->GetReferencedTexture();
-
-			OceanTexture_A->Draw(FeatureLevel, HeightRT_A->SizeX, SimulationTime, Profile_A->Parameters, OutHeight_A, OutNormal_A, RHICmdList);
 			OceanTexture_B->Draw(FeatureLevel, HeightRT_B->SizeX, SimulationTime, Profile_B->Parameters, OutHeight_B, OutNormal_B, RHICmdList);
 		}
 	);

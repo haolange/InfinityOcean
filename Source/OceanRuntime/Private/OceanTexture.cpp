@@ -121,11 +121,11 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	DTBuffer_UAV = RHICreateUnorderedAccessView(DTBuffer.Buffer, false, false);
 
 	FRHIResourceCreateInfo HeightRT_CreateInfo;
-	Height_RT = RHICreateTexture2D(Resolution, Resolution, HeightFormat, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, HeightRT_CreateInfo);
+	Height_RT = RHICreateTexture2D(Resolution, Resolution, HeightFormat, 1, 1, TexCreate_UAV | TexCreate_ShaderResource, HeightRT_CreateInfo);
 	Height_UAV = RHICreateUnorderedAccessView(Height_RT);
 
 	FRHIResourceCreateInfo NormalRT_CreateInfo;
-	Normal_RT = RHICreateTexture2D(Resolution, Resolution, NormalFormat, 1, 1, TexCreate_ShaderResource | TexCreate_UAV, NormalRT_CreateInfo);
+	Normal_RT = RHICreateTexture2D(Resolution, Resolution, NormalFormat, 1, 1, TexCreate_UAV | TexCreate_ShaderResource, NormalRT_CreateInfo);
 	Normal_UAV = RHICreateUnorderedAccessView(Normal_RT);
 }
 
@@ -160,7 +160,6 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	}
 	TUniformBufferRef<FOceanUniformBuffer> OceanUniformBufferRef = TUniformBufferRef<FOceanUniformBuffer>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_SingleFrame);
 
-
 	//Dispatch ComputeHZero 
 	TShaderMapRef<FOceanShader_HZero> OceanShader_HZero(GetGlobalShaderMap(FeatureLevel));
 	{
@@ -175,8 +174,6 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 		//CmdList.TransitionResource(EResourceTransitionAccess::EReadable, EResourceTransitionPipeline::EComputeToCompute, HZeroBuffer_UAV);
 	}
 
-    CmdList.CopyTexture(Height_RT, DscHeightTexture, FRHICopyTextureInfo());
-    
 	//Dispatch ComputeSpecturm 
 	TShaderMapRef<FOceanShader_Specturm> OceanShader_Specturm(GetGlobalShaderMap(FeatureLevel));
 	{
