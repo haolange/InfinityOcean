@@ -5,7 +5,7 @@
 #include "ShaderParameterUtils.h"
 
 ////////////////////////////Unifrom Buffer
-FOceanUniformBuffer::FOceanUniformBuffer()
+FOceanUniform::FOceanUniform()
 {
 	FMemory::Memzero(*this);
 

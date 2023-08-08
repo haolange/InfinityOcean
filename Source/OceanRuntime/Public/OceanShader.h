@@ -6,7 +6,7 @@
 #include "ShaderParameterMacros.h"
 
 // Unifrom Buffer
-BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT_WITH_CONSTRUCTOR(FOceanUniformBuffer, )
+BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT_WITH_CONSTRUCTOR(FOceanUniform, )
 	SHADER_PARAMETER(int32, Resolution)
 	SHADER_PARAMETER(int32, Resolution_PlusOne)
 	SHADER_PARAMETER(int32, Resolution_PlusOne_Squared_MinusOne)
@@ -24,7 +24,7 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT_WITH_CONSTRUCTOR(FOceanUniformBuffer, )
 
 	SHADER_PARAMETER(FVector2D, WindDir)
 END_GLOBAL_SHADER_PARAMETER_STRUCT()
-IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(FOceanUniformBuffer, "OceanParameter");
+IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(FOceanUniform, "OceanParameter");
 
 // Compute HZero
 class FOceanShader_HZero : public FGlobalShader
@@ -35,7 +35,7 @@ class FOceanShader_HZero : public FGlobalShader
 public:
 
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
-		SHADER_PARAMETER_STRUCT_REF(FOceanUniformBuffer, UniformBuffer)
+		SHADER_PARAMETER_STRUCT_REF(FOceanUniform, UniformBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float2>, Input_SRV_GaussBuffer)
 		SHADER_PARAMETER_UAV(RWBuffer<float2>, Output_UAV_HZeroBuffer)
         //SHADER_PARAMETER_UAV(RWTexture2D<float4>, Output_UAV_DisplacementTexture)
@@ -55,7 +55,7 @@ class FOceanShader_Specturm : public FGlobalShader
 public:
 
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
-		SHADER_PARAMETER_STRUCT_REF(FOceanUniformBuffer, UniformBuffer)
+		SHADER_PARAMETER_STRUCT_REF(FOceanUniform, UniformBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float>, Input_SRV_OmegaBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float2>, Input_SRV_HZeroBuffer)
 		SHADER_PARAMETER_UAV(RWBuffer<float2>, Output_UAV_HTBuffer)
@@ -76,7 +76,7 @@ class FOceanShader_Displacement : public FGlobalShader
 public:
 	
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
-		SHADER_PARAMETER_STRUCT_REF(FOceanUniformBuffer, UniformBuffer)
+		SHADER_PARAMETER_STRUCT_REF(FOceanUniform, UniformBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float2>, Input_SRV_HTBuffer)
 		SHADER_PARAMETER_SRV(Buffer<float4>, Input_SRV_DTBuffer)
 		SHADER_PARAMETER_UAV(RWTexture2D<float4>, Output_UAV_DisplacementTexture)

@@ -93,6 +93,8 @@ private:
 	const float SqrtHalf = 0.707106781186f;
 	const float Euler = 2.71828182846f;
 
+	TUniformBufferRef<FOceanUniform> OceanUniformRef;
+
 	FOceanGPUBuffer GaussBuffer;
 	FShaderResourceViewRHIRef GaussBuffer_SRV;
 

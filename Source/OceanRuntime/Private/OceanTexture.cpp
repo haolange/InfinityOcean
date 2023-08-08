@@ -127,6 +127,25 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	FRHIResourceCreateInfo NormalRT_CreateInfo;
 	Normal_RT = RHICreateTexture2D(Resolution, Resolution, NormalFormat, 1, 1, TexCreate_UAV | TexCreate_ShaderResource, NormalRT_CreateInfo);
 	Normal_UAV = RHICreateUnorderedAccessView(Normal_RT);
+
+	FOceanUniform OceanUniformBuffer;
+	{
+		OceanUniformBuffer.Resolution = 0;
+		OceanUniformBuffer.Resolution_PlusOne = 0;
+		OceanUniformBuffer.Resolution_PlusOne_Squared_MinusOne = 0;
+		OceanUniformBuffer.ResolutionHalf = 0;
+		OceanUniformBuffer.ResolutionHalf_PlusOne = 0;
+		OceanUniformBuffer.ResolutionLog2_Add32 = 0;
+		OceanUniformBuffer.Time = 0;
+		OceanUniformBuffer.FrequencyScale = 0;
+		OceanUniformBuffer.LinearScale = 0;
+		OceanUniformBuffer.WindScale = 0;
+		OceanUniformBuffer.RootScale = 0;
+		OceanUniformBuffer.PowerScale = 0;
+		OceanUniformBuffer.ChoppyScale = 0;
+		OceanUniformBuffer.WindDir = OceanParameters.WindDir;
+	}
+	OceanUniformRef = TUniformBufferRef<FOceanUniform>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_MultiFrame);
 }
 
 void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList)
@@ -141,7 +160,7 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	float FFT_PhilNorm = Euler / FMath::Max(0.00001f, OceanParameters.Period);
 	float FFT_Gravity = FMath::Pow(Gravity / FMath::Pow(OceanParameters.WindSpeed, 2), 2);
 
-	FOceanUniformBuffer OceanUniformBuffer;
+	FOceanUniform OceanUniformBuffer;
 	{
 		OceanUniformBuffer.Resolution = Resolution;
 		OceanUniformBuffer.Resolution_PlusOne = Resolution + 1;
@@ -158,14 +177,14 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 		OceanUniformBuffer.ChoppyScale = OceanParameters.Choppyness;
 		OceanUniformBuffer.WindDir = OceanParameters.WindDir;
 	}
-	TUniformBufferRef<FOceanUniformBuffer> OceanUniformBufferRef = TUniformBufferRef<FOceanUniformBuffer>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_SingleFrame);
+	OceanUniformRef.UpdateUniformBufferImmediate(OceanUniformBuffer);
 
 	//Dispatch ComputeHZero 
 	TShaderMapRef<FOceanShader_HZero> OceanShader_HZero(GetGlobalShaderMap(FeatureLevel));
 	{
 		FOceanShader_HZero::FParameters HZeroParameter;
 		{
-			HZeroParameter.UniformBuffer = OceanUniformBufferRef;
+			HZeroParameter.UniformBuffer = OceanUniformRef;
 			HZeroParameter.Input_SRV_GaussBuffer = GaussBuffer_SRV;
 			HZeroParameter.Output_UAV_HZeroBuffer = HZeroBuffer_UAV;
             //HZeroParameter.Output_UAV_DisplacementTexture = Height_UAV;
@@ -179,7 +198,7 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	{
 		FOceanShader_Specturm::FParameters HTDTParameter;
 		{
-			HTDTParameter.UniformBuffer = OceanUniformBufferRef;
+			HTDTParameter.UniformBuffer = OceanUniformRef;
 			HTDTParameter.Input_SRV_OmegaBuffer = OmegaBuffer_SRV;
 			HTDTParameter.Input_SRV_HZeroBuffer = HZeroBuffer_SRV;
 			HTDTParameter.Output_UAV_HTBuffer = HTBuffer_UAV;
@@ -195,7 +214,7 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	{
 		FOceanShader_Displacement::FParameters DisplacementParameter;
 		{
-			DisplacementParameter.UniformBuffer = OceanUniformBufferRef;
+			DisplacementParameter.UniformBuffer = OceanUniformRef;
 			DisplacementParameter.Input_SRV_HTBuffer = HTBuffer_SRV;
 			DisplacementParameter.Input_SRV_DTBuffer = DTBuffer_SRV;
 			DisplacementParameter.Output_UAV_DisplacementTexture = Height_UAV;
