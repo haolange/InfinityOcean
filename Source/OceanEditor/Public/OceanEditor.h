@@ -18,7 +18,6 @@ public:
 	virtual void ShutdownModule() override;
 
 private:
-	EAssetTypeCategories::Type InfinityOceanCategory;
-	TSharedPtr<FSlateStyleSet> OceanProfileStyleIcon;
-	class FOceanProfileCreateAction* OceanAssetAction;
+	TSharedPtr<FSlateStyleSet> OceanProfileIcon;
+	class FOceanProfileCreateAction* OceanProfileAction;
 };

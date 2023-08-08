@@ -18,24 +18,24 @@ void FOceanEditorModule::StartupModule()
 	IAssetTools& AssetTools = AssetToolsModule.Get();
 
 	///Rigister Asset Category
-	InfinityOceanCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Infinity Ocean")), LOCTEXT("InfinityOceanCategory", "InfinityOcean"));
-	OceanAssetAction = new FOceanProfileCreateAction(InfinityOceanCategory);
-	AssetTools.RegisterAssetTypeActions(MakeShareable(OceanAssetAction));
+	EAssetTypeCategories::Type OceanCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Infinity Ocean")), LOCTEXT("InfinityOceanCategory", "InfinityOcean"));
+	OceanProfileAction = new FOceanProfileCreateAction(OceanCategory);
+	AssetTools.RegisterAssetTypeActions(MakeShareable(OceanProfileAction));
 
 	///Rigister Asset Icon
-	OceanProfileStyleIcon = MakeShareable(new FSlateStyleSet("OceanProfileStyle"));
+	OceanProfileIcon = MakeShareable(new FSlateStyleSet("OceanProfileStyle"));
 	FString ResourceDir = IPluginManager::Get().FindPlugin("InfinityOcean")->GetBaseDir();
-	OceanProfileStyleIcon->SetContentRoot(ResourceDir);
+	OceanProfileIcon->SetContentRoot(ResourceDir);
 
 	FSlateImageBrush* OceanProfileBrush = new FSlateImageBrush
 	(
-		OceanProfileStyleIcon->RootToContentDir(TEXT("Resources/Icon_Ocean"), TEXT(".png")), FVector2D(128, 128)
+		OceanProfileIcon->RootToContentDir(TEXT("Resources/Icon_Ocean"), TEXT(".png")), FVector2D(128, 128)
 	);
 
 	if (OceanProfileBrush != nullptr)
 	{
-		OceanProfileStyleIcon->Set("ClassThumbnail.OceanProfile", OceanProfileBrush);
-		FSlateStyleRegistry::RegisterSlateStyle(*OceanProfileStyleIcon);
+		OceanProfileIcon->Set("ClassThumbnail.OceanProfile", OceanProfileBrush);
+		FSlateStyleRegistry::RegisterSlateStyle(*OceanProfileIcon);
 	}
 }
 
@@ -47,10 +47,10 @@ void FOceanEditorModule::ShutdownModule()
 		IAssetTools& AssetTools = AssetToolsModule.Get();
 
 		///UnRigister Asset Category
-		AssetTools.UnregisterAssetTypeActions(OceanAssetAction->AsShared());
+		AssetTools.UnregisterAssetTypeActions(OceanProfileAction->AsShared());
 
 		///UnRigister Asset Icon
-		FSlateStyleRegistry::UnRegisterSlateStyle(OceanProfileStyleIcon->GetStyleSetName());
+		FSlateStyleRegistry::UnRegisterSlateStyle(OceanProfileIcon->GetStyleSetName());
 	}
 }
 

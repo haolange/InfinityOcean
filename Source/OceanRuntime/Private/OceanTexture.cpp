@@ -1,4 +1,5 @@
 #include "OceanTexture.h"
+
 #include "RHI.h"
 #include "Shader.h"
 #include "ClearQuad.h"
@@ -128,7 +129,7 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	Normal_RT = RHICreateTexture2D(Resolution, Resolution, NormalFormat, 1, 1, TexCreate_UAV | TexCreate_ShaderResource, NormalRT_CreateInfo);
 	Normal_UAV = RHICreateUnorderedAccessView(Normal_RT);
 
-	FOceanUniform OceanUniformBuffer;
+	FOceanUniformData OceanUniformBuffer;
 	{
 		OceanUniformBuffer.Resolution = 0;
 		OceanUniformBuffer.Resolution_PlusOne = 0;
@@ -145,7 +146,7 @@ void UOceanTexture::Init(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 		OceanUniformBuffer.ChoppyScale = 0;
 		OceanUniformBuffer.WindDir = OceanParameters.WindDir;
 	}
-	OceanUniformRef = TUniformBufferRef<FOceanUniform>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_MultiFrame);
+	//OceanUniformRef = TUniformBufferRef<FOceanUniformData>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_MultiFrame);
 }
 
 void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, float SimulationTime, const FOceanParameterStruct& OceanParameters, FRHITexture* DscHeightTexture, FRHITexture* DscNormalTexture, FRHICommandListImmediate& CmdList)
@@ -160,7 +161,7 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 	float FFT_PhilNorm = Euler / FMath::Max(0.00001f, OceanParameters.Period);
 	float FFT_Gravity = FMath::Pow(Gravity / FMath::Pow(OceanParameters.WindSpeed, 2), 2);
 
-	FOceanUniform OceanUniformBuffer;
+	FOceanUniformData OceanUniformBuffer;
 	{
 		OceanUniformBuffer.Resolution = Resolution;
 		OceanUniformBuffer.Resolution_PlusOne = Resolution + 1;
@@ -177,7 +178,8 @@ void UOceanTexture::Draw(ERHIFeatureLevel::Type FeatureLevel, int32 Resolution, 
 		OceanUniformBuffer.ChoppyScale = OceanParameters.Choppyness;
 		OceanUniformBuffer.WindDir = OceanParameters.WindDir;
 	}
-	OceanUniformRef.UpdateUniformBufferImmediate(OceanUniformBuffer);
+	//OceanUniformRef.UpdateUniformBufferImmediate(OceanUniformBuffer);
+	TUniformBufferRef<FOceanUniformData> OceanUniformRef = TUniformBufferRef<FOceanUniformData>::CreateUniformBufferImmediate(OceanUniformBuffer, UniformBuffer_SingleFrame);
 
 	//Dispatch ComputeHZero 
 	TShaderMapRef<FOceanShader_HZero> OceanShader_HZero(GetGlobalShaderMap(FeatureLevel));
