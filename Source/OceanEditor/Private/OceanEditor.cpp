@@ -18,7 +18,7 @@ void FOceanEditorModule::StartupModule()
 	IAssetTools& AssetTools = AssetToolsModule.Get();
 
 	///Rigister Asset Category
-	EAssetTypeCategories::Type OceanCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Infinity Ocean")), LOCTEXT("InfinityOceanCategory", "InfinityOcean"));
+	EAssetTypeCategories::Type OceanCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Infinity Ocean")), LOCTEXT("InfinityOceanCategory", "Infinity Ocean"));
 	OceanProfileAction = new FOceanProfileCreateAction(OceanCategory);
 	AssetTools.RegisterAssetTypeActions(MakeShareable(OceanProfileAction));
 
